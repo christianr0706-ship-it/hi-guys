@@ -110,6 +110,7 @@ public class Player
         Suit = suit;
         Face = face;
     }
+    
 
     private int GetCardLevel(Card card)
     {
@@ -185,6 +186,9 @@ public class Player
 
 static partial class Program
 {
+
+
+
     public static void Main()
     {
         Player p1 = new Player("???", 10, 0, "none", "none");
@@ -257,9 +261,22 @@ static partial class Program
         {
             Console.WriteLine("A path splits before you. Choose a direction to travel. (1, 2, or 3)");
             int input = int.Parse(Console.ReadLine());
-            if (input < 1 || input > 3)
+            if (input < 1 || input > 3 && input != 9)
             {
                 Console.WriteLine("Invalid input. Enter 1, 2, or 3.");
+                continue;
+            }
+            // Adding this so I can see the cards drawn for dev reasons
+            if (input == 9)
+            {
+                Console.WriteLine("this is a secret dev thing. dont read these.");
+                foreach (var group in groups)
+                {
+                    foreach (var card in group)
+                    {
+                        Console.WriteLine(card);
+                    }
+                }
                 continue;
             }
             input--;
@@ -268,6 +285,10 @@ static partial class Program
                 Console.WriteLine("You've hit a wall. Try going another direction.");
                 continue;
             }
+            
+
+
+            
             int index = rand.Next(groups[input].Count);
             Card drawn = groups[input][index];
             groups[input].RemoveAt(index);
