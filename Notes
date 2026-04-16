@@ -1,0 +1,42 @@
+// Ideas:
+// - Input notes -> make a chord? (figure out a system to automatically combine information together in a string)
+// - A personality test? (could honestly be too simplistic)
+// - Campaign for North Africa (the entire thing)
+// - EXPEDITION - The PC Port
+// - Impossible password game?
+
+// Expedition            <- CHOOSING THIS ONE!!! because I figured out RNG and its actually super easy
+// - Implement RNG for dice rolling mechanic and card shuffling (DONE)
+// - Card shuffling - Each card is an item in a list? or an index?
+// That's mostly it, figuring out the cards is probably the hardest part of it, but I don't think
+// > the rest of the game will be all that challenging.
+
+// Password game
+// - Just a matter of reading/analyzing a string over and over
+// - Also coming up with unique requirements, but that should be easy
+
+
+
+EXPEDITION Planning:
+
+- The whole face cards / powers system might be a bit much right now. Focus on core gameplay first
+- BUT when we do add powers, make sure to add descriptions during card selection or else players won't know what they're choosing
+
+It'd be cool to include a rules screen. Press a button and view the rules of the game, like what suits equal what room types.
+If I have the entire game screen print in one function, I can just use Console.Clear() + the function to go to and return
+from the rules screen.
+
+
+PRE-FINAL PROJECT:
+- Base game, player customization but no powerups
+- Room types, rolls, health, treasure
+- Possibly either infinite floors, or just one
+- Definitely single player - balance Spade rooms AKA trap rooms for one player
+    - Maybe treasure is taken instead of Health?
+
+- Past the deadline already, so probably just sticking with one floor for this project.
+
+FINAL:
+- Powerups tied to customization
+- Same rooms, rolls, health, treasure
+- Finite and exact number of floors
