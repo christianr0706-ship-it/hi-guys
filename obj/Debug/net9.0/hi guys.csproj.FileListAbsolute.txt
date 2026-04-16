@@ -26,3 +26,4 @@ C:\Users\chris\OneDrive\Documents\programming\hi guys\obj\Debug\net9.0\refint\hi
 C:\Users\chris\OneDrive\Documents\programming\hi guys\obj\Debug\net9.0\hi guys.pdb
 C:\Users\chris\OneDrive\Documents\programming\hi guys\obj\Debug\net9.0\hi guys.genruntimeconfig.cache
 C:\Users\chris\OneDrive\Documents\programming\hi guys\obj\Debug\net9.0\ref\hi guys.dll
+C:\Users\chris\OneDrive\Documents\programming\hi guys\obj\Debug\net9.0\hi guys.sourcelink.json

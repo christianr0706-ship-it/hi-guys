@@ -246,6 +246,13 @@ static partial class Program
         Deck deck = new Deck();
         var groups = deck.DrawGroup();
         Random rand = new Random();
+
+        if (p1.Health <= 0)
+        {
+            Console.Clear();
+            Console.WriteLine("You died.");
+        }
+
         while (groups.Count(g => g.Count == 0) < 2)
         {
             Console.WriteLine("A path splits before you. Choose a direction to travel. (1, 2, or 3)");
