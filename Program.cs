@@ -128,9 +128,14 @@ public class Player
             case "Hearts":
                 int healAmount = Math.Min(level, MaxHealth - Health);
                 Health += healAmount;
-                message = healAmount > 0
-                    ? $"You found a good spot to rest and healed for {healAmount})."
-                    : $"You found a good spot to rest, but you're already fully healed.";
+                if (healAmount > 0)
+                {
+                    message = $"You found a good spot to rest and healed for {healAmount}.";
+                }
+                else
+                {
+                    message = $"You found a good spot to rest, but you're already fully healed.";
+                }
                 break;
 
             case "Diamonds":
@@ -167,6 +172,7 @@ public class Player
                 if (roll2 <= 4)
                 {
                     Treasure -= level;
+                    Treasure = Math.Max(Treasure, 0);
                     message = $"FAILURE: The enemy beat you up, ran your pockets, stole your Jordans, and cursed your bloodline. Lost {level} treasure.";
                 }
                 else
@@ -197,51 +203,88 @@ static partial class Program
         p1.Name = Console.ReadLine();
         Console.WriteLine($"You are {p1.Name}");
         Console.WriteLine();
-        Console.WriteLine("Choose a suit. S for SPADE, H for HEART, C for CLUB, D for DIAMOND");
-        Console.WriteLine();
-        // Add a switch here for suit selection, do the same for Face
-        ConsoleKey key = Console.ReadKey(true).Key;
-        switch (key)
+        bool validSuitChosen = false;
+        do
         {
-            case ConsoleKey.S:
-            Console.WriteLine($"You chose SPADE");
-            p1.Suit = "SPADES";
-            break;
+            Console.WriteLine("Choose a suit. S for SPADE, H for HEART, C for CLUB, D for DIAMOND");
+            Console.WriteLine();
+            ConsoleKey key = Console.ReadKey(true).Key;
+            switch (key)
+            {
+                case ConsoleKey.S:
+                    Console.WriteLine($"You chose SPADE");
+                    p1.Suit = "SPADES";
+                    validSuitChosen = true;
+                    break;
                 case ConsoleKey.H:
-                Console.WriteLine($"You chose HEART");
-                p1.Suit = "HEARTS";
-                break;
-                    case ConsoleKey.C:
+                    Console.WriteLine($"You chose HEART");
+                    p1.Suit = "HEARTS";
+                    validSuitChosen = true;
+                    break;
+                case ConsoleKey.C:
                     Console.WriteLine($"You chose CLUB");
                     p1.Suit = "CLUBS";
+                    validSuitChosen = true;
                     break;
-                        case ConsoleKey.D:
-                        Console.WriteLine($"You chose DIAMOND");
-                        p1.Suit = "DIAMONDS";
-                        break;
-        }
+                case ConsoleKey.D:
+                    Console.WriteLine($"You chose DIAMOND");
+                    p1.Suit = "DIAMONDS";
+                    validSuitChosen = true;
+                    break;
+                default:
+                    Console.WriteLine("Invalid input. Please choose S, H, C, or D.");
+                    Console.WriteLine();
+                    break;
+            }
+        } while (!validSuitChosen);
         Console.WriteLine();
         Console.WriteLine("Finally, choose your Face Card and we can begin the Expedition.");
         Console.WriteLine("Press K for KING, Q for QUEEN, or J for JACK.");
         Console.WriteLine();
-        ConsoleKey key2 = Console.ReadKey(true).Key;
-        switch (key2)
+        bool validFaceChosen = false;
+        do
         {
-            case ConsoleKey.K:
-            Console.WriteLine($"You chose KING");
-            p1.Face = "KING";
-            break;
+            ConsoleKey key2 = Console.ReadKey(true).Key;
+            switch (key2)
+            {
+                case ConsoleKey.K:
+                    Console.WriteLine($"You chose KING");
+                    p1.Face = "KING";
+                    validFaceChosen = true;
+                    break;
                 case ConsoleKey.Q:
-                Console.WriteLine($"You chose QUEEN");
-                p1.Face = "QUEEN";
-                break;
-                    case ConsoleKey.J:
+                    Console.WriteLine($"You chose QUEEN");
+                    p1.Face = "QUEEN";
+                    validFaceChosen = true;
+                    break;
+                case ConsoleKey.J:
                     Console.WriteLine($"You chose JACK");
                     p1.Face = "JACK";
+                    validFaceChosen = true;
                     break;
-        }
+                default:
+                    Console.WriteLine("Invalid input. Please choose K, Q, or J.");
+                    Console.WriteLine();
+                    break;
+            }
+        } while (!validFaceChosen);
         Console.Clear();
         Console.WriteLine($"Your name is {p1.Name}. You are the {p1.Face} of {p1.Suit}.");
+
+        Console.WriteLine("HOW THE GAME WORKS:");
+        Console.WriteLine("In Expedition, you control a character moving through a series of floors in a dungeon.");
+        Console.WriteLine("You progress through a floor by moving through rooms.");
+        Console.WriteLine("There are 15 rooms per floor, separated into 3 directions, but you only need to complete two directions to move on to the next floor.");
+        Console.WriteLine("You have two stats: HEALTH and TREASURE. You want both to be high.");
+        Console.WriteLine("You lose Health in Trap Rooms (CLUB Cards) and gain it in Camp Rooms (HEARTS).");
+        Console.WriteLine("You gain Treasure in Treasure Rooms (DIAMONDS) and lose it in Enemy Rooms (SPADES)");
+        Console.WriteLine("Outcomes of Trap and Enemy rooms are dependent on virtual dice rolls.");
+        Console.WriteLine("In the final build of the game, the Player Card you just picked will also give you advantages based on the room type.");
+        Console.WriteLine("Make sense?");
+        Console.WriteLine();
+        Console.WriteLine();
+        Console.WriteLine();
+        Console.WriteLine("Well, doesn't matter. Good luck.");
 
         Console.WriteLine();
         Console.WriteLine("Level One:");
@@ -286,9 +329,6 @@ static partial class Program
                 continue;
             }
             
-
-
-            
             int index = rand.Next(groups[input].Count);
             Card drawn = groups[input][index];
             groups[input].RemoveAt(index);
@@ -303,6 +343,7 @@ static partial class Program
             {
                 Console.WriteLine($"Group {i + 1}: {groups[i].Count} cards");
             }
+            
 
         }
 
