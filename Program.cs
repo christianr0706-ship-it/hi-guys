@@ -127,6 +127,11 @@ public class Player
         {
             case "Hearts":
                 int healAmount = Math.Min(level, MaxHealth - Health);
+                // Double healing if player chose Heart during character creation
+                if (Suit == "HEARTS")
+                {
+                    healAmount = Math.Min(level * 2, MaxHealth - Health);
+                }
                 Health += healAmount;
                 if (healAmount > 0)
                 {
@@ -139,8 +144,14 @@ public class Player
                 break;
 
             case "Diamonds":
-                Treasure += level;
-                message = $"You found a room with {level} treasure inside.";
+                int treasureGain = level;
+                // Double treasure if player chose Diamond during character creation
+                if (Suit == "DIAMONDS")
+                {
+                    treasureGain = level * 2;
+                }
+                Treasure += treasureGain;
+                message = $"You found a room with {treasureGain} treasure inside.";
                 break;
 
             case "Clubs":
@@ -149,8 +160,20 @@ public class Player
                 Console.ReadKey(true);
                 Random trapRoll = new Random();
                 int roll = trapRoll.Next(1, 7);
-                Console.WriteLine($"You rolled a {roll}.");
-                if (roll <= 4)
+                // Add +1 bonus if player chose Club during character creation
+                int clubBonus = 0;
+                if (Suit == "CLUBS")
+                {
+                    clubBonus = 1;
+                }
+                int finalClubRoll = roll + clubBonus;
+                string clubBonusDisplay = "";
+                if (clubBonus > 0)
+                {
+                    clubBonusDisplay = $" +{clubBonus} bonus = {finalClubRoll}";
+                }
+                Console.WriteLine($"You rolled a {roll}.{clubBonusDisplay}");
+                if (finalClubRoll <= 4)
                 {
                     Health -= level;
                     Health = Math.Max(Health, 0);
@@ -168,8 +191,20 @@ public class Player
                 Console.ReadKey(true);
                 Random dieRoll = new Random();
                 int roll2 = dieRoll.Next(1, 7);
-                Console.WriteLine($"You rolled a {roll2}.");
-                if (roll2 <= 4)
+                // Add +1 bonus if player chose Spade during character creation
+                int spadeBonus = 0;
+                if (Suit == "SPADES")
+                {
+                    spadeBonus = 1;
+                }
+                int finalSpadeRoll = roll2 + spadeBonus;
+                string spadeBonusDisplay = "";
+                if (spadeBonus > 0)
+                {
+                    spadeBonusDisplay = $" +{spadeBonus} bonus = {finalSpadeRoll}";
+                }
+                Console.WriteLine($"You rolled a {roll2}.{spadeBonusDisplay}");
+                if (finalSpadeRoll <= 4)
                 {
                     Treasure -= level;
                     Treasure = Math.Max(Treasure, 0);
@@ -207,6 +242,10 @@ static partial class Program
         do
         {
             Console.WriteLine("Choose a suit. S for SPADE, H for HEART, C for CLUB, D for DIAMOND");
+            Console.WriteLine("Spades perform better in combat, adding +1 to dice rolls in Spade rooms.");
+            Console.WriteLine("Hearts have improved healing, and heal for double in Heart rooms.");
+            Console.WriteLine("Clubs avoid traps easier, adding +1 to dice rolls in Club rooms.");
+            Console.WriteLine("Diamonds find more treasure, and gain double treasure in Diamond rooms.");
             Console.WriteLine();
             ConsoleKey key = Console.ReadKey(true).Key;
             switch (key)
@@ -270,6 +309,7 @@ static partial class Program
         } while (!validFaceChosen);
         Console.Clear();
         Console.WriteLine($"Your name is {p1.Name}. You are the {p1.Face} of {p1.Suit}.");
+        Console.WriteLine();
 
         Console.WriteLine("HOW THE GAME WORKS:");
         Console.WriteLine("In Expedition, you control a character moving through a series of floors in a dungeon.");
@@ -279,12 +319,7 @@ static partial class Program
         Console.WriteLine("You lose Health in Trap Rooms (CLUB Cards) and gain it in Camp Rooms (HEARTS).");
         Console.WriteLine("You gain Treasure in Treasure Rooms (DIAMONDS) and lose it in Enemy Rooms (SPADES)");
         Console.WriteLine("Outcomes of Trap and Enemy rooms are dependent on virtual dice rolls.");
-        Console.WriteLine("In the final build of the game, the Player Card you just picked will also give you advantages based on the room type.");
-        Console.WriteLine("Make sense?");
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine("Well, doesn't matter. Good luck.");
+        Console.WriteLine("The game ends when you've explored three floors in total. Good luck.");
 
         Console.WriteLine();
         Console.WriteLine("Level One:");
@@ -293,6 +328,7 @@ static partial class Program
         Deck deck = new Deck();
         var groups = deck.DrawGroup();
         Random rand = new Random();
+        int currentFloor = 1;
 
         if (p1.Health <= 0)
         {
@@ -300,51 +336,67 @@ static partial class Program
             Console.WriteLine("You died.");
         }
 
-        while (groups.Count(g => g.Count == 0) < 2)
+        bool continueGame = true;
+        while (continueGame)
         {
-            Console.WriteLine("A path splits before you. Choose a direction to travel. (1, 2, or 3)");
-            int input = int.Parse(Console.ReadLine());
-            if (input < 1 || input > 3 && input != 9)
+            while (groups.Count(g => g.Count == 0) < 2)
             {
-                Console.WriteLine("Invalid input. Enter 1, 2, or 3.");
-                continue;
-            }
-            // Adding this so I can see the cards drawn for dev reasons
-            if (input == 9)
-            {
-                Console.WriteLine("this is a secret dev thing. dont read these.");
-                foreach (var group in groups)
+                Console.WriteLine("A path splits before you. Choose a direction to travel. (1, 2, or 3)");
+                if (!int.TryParse(Console.ReadLine(), out int input))
                 {
-                    foreach (var card in group)
-                    {
-                        Console.WriteLine(card);
-                    }
+                    Console.WriteLine("Invalid input. Enter 1, 2, or 3.");
+                    continue;
                 }
-                continue;
+                if (input < 1 || input > 3 && input != 9)
+                {
+                    Console.WriteLine("Invalid input. Enter 1, 2, or 3.");
+                    continue;
+                }
+                // Adding this so I can see the cards drawn for dev reasons
+                if (input == 9)
+                {
+                    Console.WriteLine("this is a secret dev thing. dont read these.");
+                    foreach (var group in groups)
+                    {
+                        foreach (var card in group)
+                        {
+                            Console.WriteLine(card);
+                        }
+                    }
+                    continue;
+                }
+                input--;
+                if (groups[input].Count == 0)
+                {
+                    Console.WriteLine("You've hit a wall. Try going another direction.");
+                    continue;
+                }
+                
+                int index = rand.Next(groups[input].Count);
+                Card drawn = groups[input][index];
+                groups[input].RemoveAt(index);
+                Console.Clear();
+                Console.WriteLine($"You drew: {drawn}");
+                string effectMessage = p1.ApplyRoomEffect(drawn);
+                Console.WriteLine(effectMessage);
+                Console.WriteLine($"Health: {p1.Health}/{p1.MaxHealth}, Treasure: {p1.Treasure}");
+                Console.WriteLine();
+                Console.WriteLine("Cards remaining in groups:");
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine($"Group {i + 1}: {groups[i].Count} cards");
+                }
             }
-            input--;
-            if (groups[input].Count == 0)
-            {
-                Console.WriteLine("You've hit a wall. Try going another direction.");
-                continue;
-            }
-            
-            int index = rand.Next(groups[input].Count);
-            Card drawn = groups[input][index];
-            groups[input].RemoveAt(index);
-            Console.Clear();
-            Console.WriteLine($"You drew: {drawn}");
-            string effectMessage = p1.ApplyRoomEffect(drawn);
-            Console.WriteLine(effectMessage);
-            Console.WriteLine($"Health: {p1.Health}/{p1.MaxHealth}, Treasure: {p1.Treasure}");
-            Console.WriteLine();
-            Console.WriteLine("Cards remaining in groups:");
-            for (int i = 0; i < 3; i++)
-            {
-                Console.WriteLine($"Group {i + 1}: {groups[i].Count} cards");
-            }
-            
 
+            Console.Clear();
+            Console.WriteLine($"Floor {currentFloor} Complete!");
+            Console.WriteLine();
+            Console.WriteLine("Shuffling the deck...");
+            deck.Shuffle();
+            groups = deck.DrawGroup();
+            currentFloor++;
+            Console.WriteLine($"Level {currentFloor}:");
+            Console.WriteLine();
         }
 
 
