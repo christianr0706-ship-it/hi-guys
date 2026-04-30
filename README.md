@@ -2,5 +2,3 @@ This is Expedition, the digitized form of a card game I designed last semester.
 
 This is the final version of the game. As in, it's the version I'm submitting as my final.
 Maybe I'll work on it more later on, add powerups based on the face card chosen, but for now I think there's enough here.
-
-                                      "$$$""""
