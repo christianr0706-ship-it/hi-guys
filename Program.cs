@@ -339,7 +339,11 @@ static partial class Program
         bool continueGame = true;
         while (continueGame)
         {
-            while (groups.Count(g => g.Count == 0) < 2)
+            Console.WriteLine("Press any key to begin exploring...");
+            Console.ReadKey(true);
+            Console.Clear();
+
+            do
             {
                 Console.WriteLine("A path splits before you. Choose a direction to travel. (1, 2, or 3)");
                 if (!int.TryParse(Console.ReadLine(), out int input))
@@ -381,22 +385,47 @@ static partial class Program
                 Console.WriteLine(effectMessage);
                 Console.WriteLine($"Health: {p1.Health}/{p1.MaxHealth}, Treasure: {p1.Treasure}");
                 Console.WriteLine();
+                
+                if (p1.Health <= 0)
+                {
+                    Console.Clear();
+                    Console.WriteLine("You died. Your expedition ends here.");
+                    Console.WriteLine($"You fell on Floor {currentFloor}.");
+                    continueGame = false;
+                    break;
+                }
+                
                 Console.WriteLine("Cards remaining in groups:");
                 for (int i = 0; i < 3; i++)
                 {
                     Console.WriteLine($"Group {i + 1}: {groups[i].Count} cards");
                 }
-            }
+            } while (groups.Count(g => g.Count == 0) < 2 && continueGame);
 
-            Console.Clear();
-            Console.WriteLine($"Floor {currentFloor} Complete!");
-            Console.WriteLine();
-            Console.WriteLine("Shuffling the deck...");
-            deck.Shuffle();
-            groups = deck.DrawGroup();
-            currentFloor++;
-            Console.WriteLine($"Level {currentFloor}:");
-            Console.WriteLine();
+            if (continueGame)
+            {
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey(true);
+                Console.Clear();
+                Console.WriteLine($"Floor {currentFloor} Complete!");
+                Console.WriteLine();
+                
+                if (currentFloor >= 3)
+                {
+                    Console.WriteLine("You have survived the expedition.");
+                    Console.WriteLine($"You made it out with {p1.Treasure} treasure.");
+                    continueGame = false;
+                }
+                else
+                {
+                    Console.WriteLine("Shuffling the deck...");
+                    deck.Shuffle();
+                    groups = deck.DrawGroup();
+                    currentFloor++;
+                    Console.WriteLine($"Level {currentFloor}:");
+                    Console.WriteLine();
+                }
+            }
         }
 
 
